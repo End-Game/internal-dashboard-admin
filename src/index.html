@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>EndGame</title>
+        <script type="text/javascript" src="https://use.typekit.net/pnr3zhl.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+        <script src="http://127.0.0.1:35729/livereload.js"></script>
+        <link rel="stylesheet" type="text/css" href="EndGameIntranet-admin.css">
+    </head>
+    <body>
+    <!--endgame logo-->
+    <div id="logo">
+        <div>
+            <img src="Images/Logo.png"/>
+        </div>
+    </div>
+    <!--top green block-->
+    <div id="top_green">
+        <div>
+            <p id="p1">What's on at EndGame</p>
+            <p id="p2">See what we have on the go currently</p>
+        </div>
+    </div>
+    <!--graph block-->
+    <div class="col_container" id="graph_block">
+        <div class="column" id="budget">
+            <canvas id="budget_canvas" width="200px" height="200px"></canvas>
+            <img class="graphimg" src="Images/BudgetImage.png"/>
+            <p class="title">Budget</p>
+            <hr>
+        </div>
+        <div class="column" id="investment">
+            <canvas id="investment_canvas" width="200px" height="200px"></canvas>
+            <img class="graphimg" id="investmentimg" src="Images/InvestmentImage.png"/>
+            <p class="title">Investment</p>
+            <hr>
+        </div>
+        <div  class="column_last" id="team_satisfaction">
+            <canvas id="team_satisfaction_canvas" width="200px" height="200px"></canvas>
+            <img class="graphimg" src="Images/SatisfactionImage.png"/>
+            <p class="title">Team Satisfaction</p>
+            <hr>
+        </div>
+    </div>
+    <!--deadlines block-->
+    <div class="col_container" id="deadlines_block">
+        <div class="column" id="deadlines">
+            <p class="title">Deadlines</p>
+            <hr>
+        </div>
+        <div class="column" id="news_feed">
+            <p class="title">News Feed</p>
+            <hr>
+        </div>
+        <div class="column_last" id="useful_links">
+            <p class="title">Useful Links</p>
+            <hr>
+        </div>
+    </div>
+    <!--products block-->
+    <div class="col_container" id="products_block">
+        <p class="title">Products</p>
+        <hr>
+        <div class="column" id="start_up">
+            <p class="bold_title">Start Up</p>
+        </div>
+        <div class="column" id="operational">
+            <p class="bold_title">Operational</p>
+        </div>
+        <div class="column_last" id="passive">
+            <p class="bold_title">Passive</p>
+        </div>
+    </div>
+    <!--green time block-->
+    <div id="time_block">
+        <p class="white_title">Your Time</p>
+        <hr id="white_hr">
+        <div id="fields">
+            <div class="small">
+                <p class="text">Date</p>
+            </div>
+            <div class="small">
+                <p class="text">Time</p>
+            </div>
+            <div class="large">
+                <p class="text">Client &amp Project</p>
+            </div>
+            <div class="large">
+                <p class="text">Task</p>
+            </div>
+            <div class="large">
+                <p class="text">Notes</p>
+            </div>
+            <div id="add_button">
+                <p class="white_text">ADD</p>
+            </div>
+        </div>
+        <p class="white_text">VIEW GRAPH</p>
+    </div>
+    <!-- templates -->
+    <script id="graphDataTemplate" type="text/template">
+        <span><%=dataTitle%>:</span> <%=data%>
+        <button class="edit">Edit</button>
+    </script>
+    <script id="graphDataEditTemplate" type="text/template">
+        <form action="#">
+            <input class="dataTitle" value="<%=dataTitle%>" />
+            <input class="data" value="<%=data%>" />
+            <button class="save">Save</button>
+            <button class="cancel">Cancel</button>
+        </form>
+    </script>
+    
+    <script id="deadlineTemplate" type="text/template">
+        <p class="date_text"><%=date%></p>
+        <p class="text"><%=task%></p>
+    </script>
+    <script id="newsTemplate" type="text/template">
+        <p class="date_text"><%=date%></p>
+        <p class="text"><%=news%></p>
+        <p class="author_text"><%=author%></p>
+    </script>
+    <script id="linkTemplate" type="text/template">
+        <p class="text"><a href=<%=link%>><%=name%></a> <%=description%></p>
+    </script>
+    <script id="productTemplate" type="text/template">
+        <p class="text"><%=name%></p>
+        <img src="Images/<%=dots%>Dot.png"/>
+        <p class="small_text"><%=description%></p>
+    </script>
+    <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/backbone-min.js"></script>
+    <script src='js/EndGameIntranet-admin.js'></script>
+
+</body>

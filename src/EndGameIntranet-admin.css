@@ -1,0 +1,298 @@
+* {
+	font-family: "freight-sans-pro-1","freight-sans-pro-2";
+}
+
+#logo div {
+	width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#top_green {
+	background-color: #80C99C;
+	padding-top: 50px;
+	padding-bottom: 50px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 50px;
+}
+
+#top_green > div {
+	width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#top_green #p1 {
+	font-size: 60px;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+}
+
+#top_green #p2 {
+	font-size: 48px;
+	color: white;
+	text-align: center;
+}
+
+.col_container {
+	width: 960px;
+	display: block;
+	padding-top: 25px;
+	padding-bottom: 50px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.column {
+	display: inline-block;
+	width: 310px;
+	margin-right: 10px;
+}
+
+.column_last {
+	display: inline-block;
+	width: 310px;
+}
+
+#graph_block > div {
+	vertical-align: top;
+}
+
+canvas {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.graphimg {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: -143px;
+	margin-bottom: 82px;
+}
+
+#investmentimg {
+	margin-top: -135px;
+	margin-bottom: 90px;
+}
+
+#graph_block p:last-of-type {
+/*	display: inline-block;
+	margin-left: 5px;
+	margin-right: 5px;*/
+	margin-top: -20px;
+}
+
+.title {
+	font-size: 43px;
+	text-align: center;
+	color: #333333;
+}
+
+hr {
+	width: 25px;
+	height: 3px;
+	margin-top: -30px;
+	margin-left: auto;
+	margin-right: auto;
+	color: #80C99C;
+	background-color: #80C99C;
+	border: none;
+}
+
+.textSC {
+	font-size: 21px;
+	font-variant: small-caps;
+	text-align: center;
+	color: #666666;
+}
+
+#graph_block span {
+	font-variant: normal;
+	font-weight: bold;
+}
+
+#deadlines_block {
+	border-top: 2px dashed #b3b3b3;
+	border-bottom: 2px dashed #b3b3b3;
+}
+
+#deadlines_block > div {
+	vertical-align: top;
+}
+
+#deadlines div:first-of-type{
+	border-radius: 5px;
+	background-color: #80c99c;
+	margin-top: 50px;
+	margin-bottom: 25px;
+}
+
+#deadlines div:first-of-type .date_text {
+	color: white;
+	margin-left: 15px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#deadlines div:first-of-type .text {
+	color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.date_text {
+	display: inline-block;
+	width: 60px;
+	font-size: 21px;
+	font-variant: small-caps;
+	color: #80c99c;
+	vertical-align: top;
+	margin-right: 10px;
+}
+
+.text {
+	display: inline-block;
+	font-size: 21px;
+	color: #666666;
+	font-weight: 400;
+}
+
+#deadlines .text {
+	width: 220px;
+}
+
+#news_feed div:first-of-type {
+	margin-top: 50px;
+	border-top: 2px dashed #b3b3b3;
+	border-bottom: 2px dashed #b3b3b3;
+}
+
+#news_feed div{
+	border-bottom: 2px dashed #b3b3b3;
+}
+
+#news_feed .text {
+	width: 220px;
+}
+
+.author_text {
+	margin-left: 75px;
+	margin-top: -20px;
+	width: 220px;
+	font-size: 21px;
+	font-variant: small-caps;
+	color: #b3b3b3;
+}
+
+#useful_links div:first-of-type {
+	margin-top: 25px;
+}
+
+#useful_links a {
+	color: #80c99c;
+}
+
+#products_block > div {
+	vertical-align: top;
+}
+
+.bold_title {
+	margin-bottom: 30px;
+	font-size: 36px;
+	font-weight: bold;
+	color: #4d4d4d;
+}
+
+#products_block img {
+	margin-left: 10px;
+	padding-bottom: 2px;
+}
+
+.small_text {
+	display: inline-block;
+	margin-top: -10px;
+	font-size: 18px;
+	font-style: italic;
+	font-weight: 300;
+	color: #b3b3b3;
+}
+
+#time_block {
+	background-color: #80C99C;
+	padding-top: 25px;
+	padding-bottom: 25px;
+	margin-left: -10px;
+	margin-right: -10px;
+}
+
+.white_title {
+	font-size: 43px;
+	text-align: center;
+	color: white;
+}
+
+#white_hr {
+	color: white;
+	background-color: white;
+	margin-bottom: 25px;
+}
+
+.white_text {
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	color: white;
+}
+
+#fields div {
+	display: inline-block;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-right: 10px;
+}
+
+.small {
+	background-color: white;
+	border-radius: 5px;
+	width: 70px;
+}
+
+.large {
+	background-color: white;
+	border-radius: 5px;
+	width: 190px;
+}
+
+#add_button {
+	background-color: #80c99c;
+	border: 3px solid white;
+	border-radius: 5px;
+	margin-right: 0px;
+}
+
+#fields .text {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#add_button .white_text {
+	margin-top: -1px;
+	margin-bottom: -2px;
+}
+
+#fields {
+	display: block;
+	width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+
