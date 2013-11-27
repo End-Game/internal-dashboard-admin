@@ -192,7 +192,7 @@ hr {
 	margin-top: 25px;
 }
 
-#useful_links a {
+a {
 	color: #80c99c;
 }
 
@@ -213,7 +213,7 @@ hr {
 }
 
 .small_text {
-	display: inline-block;
+	display: block;
 	margin-top: -10px;
 	font-size: 18px;
 	font-style: italic;

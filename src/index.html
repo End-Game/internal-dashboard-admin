@@ -48,14 +48,34 @@
         <div class="column" id="deadlines">
             <p class="title">Deadlines</p>
             <hr>
+            <a id="showDeadlineForm" href="">Add new</a>
+            <form id="addDeadline" action="#">
+                <input id="date" value="date" />
+                <input id="task" value="task" />
+                <button class="add">Add</button>
+            </form>
         </div>
         <div class="column" id="news_feed">
             <p class="title">News Feed</p>
             <hr>
+            <a id="showNewsForm" href="#">Add new</a>
+            <form id="addNews" action="#">
+                <input id="date" value="date" />
+                <input id="news" value="news" />
+                <input id="author" value="author" />
+                <button class="add">Add</button>
+            </form>
         </div>
         <div class="column_last" id="useful_links">
             <p class="title">Useful Links</p>
             <hr>
+            <a id="showLinkForm" href="#">Add new</a>
+            <form id="addLink" action="#">
+                <input id="name" value="name" />
+                <input id="link" value="link" />
+                <input id="description" value="description" />
+                <button class="add">Add</button>
+            </form>
         </div>
     </div>
     <!--products block-->
@@ -64,12 +84,36 @@
         <hr>
         <div class="column" id="start_up">
             <p class="bold_title">Start Up</p>
+            <a id="showStartUpForm" href="#">Add new</a>
+            <form id="addStartUp" action="#">
+                <input id="name" value="name" />
+                <p class="text">dots:</p>
+                <input id="dots" value="Single, Double or Triple" />
+                <input id="description" value="description" />
+                <button class="add">Add</button>
+            </form>
         </div>
         <div class="column" id="operational">
             <p class="bold_title">Operational</p>
+            <a id="showOperationalForm" href="#">Add new</a>
+            <form id="addOperational" action="#">
+                <input id="name" value="name" />
+                <p class="text">dots:</p>
+                <input id="dots" value="Single, Double or Triple" />
+                <input id="description" value="description" />
+                <button class="add">Add</button>
+            </form>
         </div>
         <div class="column_last" id="passive">
             <p class="bold_title">Passive</p>
+            <a id="showPassiveForm" href="#">Add new</a>
+            <form id="addPassive" action="#">
+                <input id="name" value="name" />
+                <p class="text">dots:</p>
+                <input id="dots" value="Single, Double or Triple" />
+                <input id="description" value="description" />
+                <button class="add">Add</button>
+            </form>
         </div>
     </div>
     <!--green time block-->
@@ -111,28 +155,69 @@
             <button class="cancel">Cancel</button>
         </form>
     </script>
-    
     <script id="deadlineTemplate" type="text/template">
         <p class="date_text"><%=date%></p>
         <p class="text"><%=task%></p>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+    </script>
+    <script id="deadlineEditTemplate" type="text/template">
+        <form action="#">
+            <input class="date" value="<%=date%>" />
+            <input class="task" value="<%=task%>" />
+            <button class="save">Save</button>
+            <button class="cancel">Cancel</button>
+        </form>
     </script>
     <script id="newsTemplate" type="text/template">
         <p class="date_text"><%=date%></p>
         <p class="text"><%=news%></p>
         <p class="author_text"><%=author%></p>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+    </script>
+    <script id="newsEditTemplate" type="text/template">
+        <form action="#">
+            <input class="date" value="<%=date%>" />
+            <input class="news" value="<%=news%>" />
+            <input class="author" value="<%=author%>" />
+            <button class="save">Save</button>
+            <button class="cancel">Cancel</button>
+        </form>
     </script>
     <script id="linkTemplate" type="text/template">
         <p class="text"><a href=<%=link%>><%=name%></a> <%=description%></p>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+    </script>
+    <script id="linkEditTemplate" type="text/template">
+        <form action="#">
+            <input class="name" value="<%=name%>" />
+            <input class="link" value="<%=link%>" />
+            <input class="description" value="<%=description%>" />
+            <button class="save">Save</button>
+            <button class="cancel">Cancel</button>
+        </form>
     </script>
     <script id="productTemplate" type="text/template">
         <p class="text"><%=name%></p>
         <img src="Images/<%=dots%>Dot.png"/>
         <p class="small_text"><%=description%></p>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+    </script>
+    <script id="productEditTemplate" type="text/template">
+        <form action="#">
+            <input class="name" value="<%=name%>" />
+            <input class="dots" value="<%=dots%>" />
+            <input class="description" value="<%=description%>" />
+            <button class="save">Save</button>
+            <button class="cancel">Cancel</button>
+        </form>
     </script>
     <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
     <script src="js/underscore-min.js"></script>
     <script src="js/backbone-min.js"></script>
     <script src='js/EndGameIntranet-admin.js'></script>
-
 </body>

@@ -1,4 +1,5 @@
 $(function() {
+
     function shadeColor(color, percent) {
         var R = parseInt(color.substring(1, 3), 16);
         var G = parseInt(color.substring(3, 5), 16);
@@ -31,7 +32,7 @@ $(function() {
         } while (percent > 0);
     }
 
-    function writeJson() {
+    function writeFullJson() {
         jsonData = {};
         jsonData.budget = collections.budgetList.toJSON();
         jsonData.investment = collections.investmentList.toJSON();
@@ -42,8 +43,16 @@ $(function() {
         jsonData.startUp = collections.startUpList.toJSON();
         jsonData.operational = collections.operationalList.toJSON();
         jsonData.passive = collections.passiveList.toJSON();
-        console.log(jsonData);
         post();
+    }
+
+    function writeJson(item, list, toPost) {
+        jsonData[item] = list.toJSON();
+        if (toPost) {
+            post();
+        } else {
+            console.log(jsonData);
+        }
     }
 
     function post() {
@@ -90,9 +99,15 @@ $(function() {
         },
 
         events: {
+            "click button.delete": "del",
             "click button.edit": "editData",
-            "click button.save": "saveEdit"
-            // "click button.cancel": "cancelEdit"
+            "click button.save": "saveEdit",
+            "click button.cancel": "cancelEdit"
+        },
+
+        del: function() {
+            this.model.destroy();
+            this.remove();
         },
 
         editData: function() {
@@ -109,7 +124,10 @@ $(function() {
             });
             this.model.set(formData);
             this.render();
-            writeJson();
+        },
+
+        cancelEdit: function() {
+            this.render();
         }
     });
 
@@ -122,6 +140,7 @@ $(function() {
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
                 models[i].on("change", this.renderGraph, this);
+                models[i].on("change", this.write, this);
             }
         },
 
@@ -150,6 +169,10 @@ $(function() {
             percent = actual / target;
             var colour = "#80C99C";
             drawGraph(ctx, percent, colour);
+        },
+
+        write: function() {
+            writeJson("budget", this.collection, true);
         }
     });
 
@@ -162,6 +185,7 @@ $(function() {
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
                 models[i].on("change", this.renderGraph, this);
+                models[i].on("change", this.write, this);
             }
         },
 
@@ -191,8 +215,11 @@ $(function() {
             percent = actual / target;
             var colour = "#D82253";
             drawGraph(ctx, percent, colour);
-        }
+        },
 
+        write: function() {
+            writeJson("investment", this.collection, true);
+        }
     });
 
     var TeamSatisfactionView = Backbone.View.extend({
@@ -204,6 +231,7 @@ $(function() {
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
                 models[i].on("change", this.renderGraph, this);
+                models[i].on("change", this.write, this);
             }
 
         },
@@ -233,6 +261,10 @@ $(function() {
             percent = actual / target;
             var colour = "#666666";
             drawGraph(ctx, percent, colour);
+        },
+
+        write: function() {
+            writeJson("teamSatisfaction", this.collection, true);
         }
     });
 
@@ -249,12 +281,44 @@ $(function() {
 
     var DeadlineView = Backbone.View.extend({
         tagName: "div",
-        template: $("#deadlineTemplate").html(),
+        template: _.template($("#deadlineTemplate").html()),
+        editTemplate: _.template($("#deadlineEditTemplate").html()),
 
         render: function() {
-            var tmpl = _.template(this.template);
-            this.$el.html(tmpl(this.model.toJSON()));
+            this.$el.html(this.template(this.model.toJSON()));
             return this;
+        },
+
+        events: {
+            "click button.delete": "del",
+            "click button.edit": "editData",
+            "click button.save": "saveEdit",
+            "click button.cancel": "cancelEdit"
+        },
+
+        del: function() {
+            this.model.destroy();
+            this.remove();
+        },
+
+        editData: function() {
+            this.$el.html(this.editTemplate(this.model.toJSON()));
+        },
+
+        saveEdit: function(e) {
+            e.preventDefault();
+            var formData = {},
+                prev = this.model.previousAttributes();
+            $(e.target).closest("form").find(":input").not("button").each(function() {
+                var el = $(this);
+                formData[el.attr("class")] = el.val();
+            });
+            this.model.set(formData);
+            this.render();
+        },
+
+        cancelEdit: function() {
+            this.render();
         }
     });
 
@@ -264,6 +328,19 @@ $(function() {
         initialize: function() {
             this.collection = collections.deadlineList;
             this.render();
+            var models = this.collection.models;
+            for (var i = 0; i < models.length; i++) {
+                models[i].on("change", this.write, this);
+            }
+            this.collection.on("add", this.renderDeadline, this);
+            this.collection.on("add", this.write, this);
+            this.collection.on("remove", this.write, this);
+            this.showForm();
+        },
+
+        events: {
+            "click .add": "add",
+            "click #showDeadlineForm": "showForm"
         },
 
         render: function() {
@@ -278,6 +355,31 @@ $(function() {
                 model: item
             });
             this.$el.append(deadlineView.render().el);
+        },
+        
+        add: function(e) {
+            e.preventDefault();
+
+            var newModel = {};
+            $("#addDeadline").children("input").each(function(i, el) {
+                if ($(el).val() !== "") {
+                    newModel[el.id] = $(el).val();
+                }
+            });
+            
+            this.collection.add(new Deadline(newModel));
+        },
+        
+        showForm: function() {
+            this.$el.find("#addDeadline").slideToggle();
+        },
+
+        write: function() {
+            writeJson("deadlines", this.collection, true);
+        },
+
+        writeTemp: function() {
+            writeJson("deadlines", this.collection, false);
         }
     });
 
@@ -295,12 +397,44 @@ $(function() {
 
     var NewsView = Backbone.View.extend({
         tagName: "div",
-        template: $("#newsTemplate").html(),
+        template: _.template($("#newsTemplate").html()),
+        editTemplate: _.template($("#newsEditTemplate").html()),
 
         render: function() {
-            var tmpl = _.template(this.template);
-            this.$el.html(tmpl(this.model.toJSON()));
+            this.$el.html(this.template(this.model.toJSON()));
             return this;
+        },
+
+        events: {
+            "click button.delete": "del",
+            "click button.edit": "editData",
+            "click button.save": "saveEdit",
+            "click button.cancel": "cancelEdit"
+        },
+
+        del: function() {
+            this.model.destroy();
+            this.remove();
+        },
+
+        editData: function() {
+            this.$el.html(this.editTemplate(this.model.toJSON()));
+        },
+
+        saveEdit: function(e) {
+            e.preventDefault();
+            var formData = {},
+                prev = this.model.previousAttributes();
+            $(e.target).closest("form").find(":input").not("button").each(function() {
+                var el = $(this);
+                formData[el.attr("class")] = el.val();
+            });
+            this.model.set(formData);
+            this.render();
+        },
+
+        cancelEdit: function() {
+            this.render();
         }
     });
 
@@ -310,6 +444,19 @@ $(function() {
         initialize: function() {
             this.collection = collections.newsList;
             this.render();
+            var models = this.collection.models;
+            for (var i = 0; i < models.length; i++) {
+                models[i].on("change", this.write, this);
+            }
+            this.collection.on("add", this.renderNews, this);
+            this.collection.on("add", this.write, this);
+            this.collection.on("remove", this.write, this);
+            this.showForm();
+        },
+
+        events: {
+            "click .add": "add",
+            "click #showNewsForm": "showForm"
         },
 
         render: function() {
@@ -324,6 +471,31 @@ $(function() {
                 model: item
             });
             this.$el.append(newsView.render().el);
+        },
+        
+        add: function(e) {
+            e.preventDefault();
+
+            var newModel = {};
+            $("#addNews").children("input").each(function(i, el) {
+                if ($(el).val() !== "") {
+                    newModel[el.id] = $(el).val();
+                }
+            });
+            
+            this.collection.add(new News(newModel));
+        },
+
+        showForm: function() {
+            this.$el.find("#addNews").slideToggle();
+        },
+
+        write: function() {
+            writeJson("newsFeed", this.collection, true);
+        },
+
+        writeTemp: function() {
+            writeJson("deadlines", this.collection, false);
         }
     });
 
@@ -341,12 +513,44 @@ $(function() {
 
     var LinkView = Backbone.View.extend({
         tagName: "div",
-        template: $("#linkTemplate").html(),
+        template: _.template($("#linkTemplate").html()),
+        editTemplate: _.template($("#linkEditTemplate").html()),
 
         render: function() {
-            var tmpl = _.template(this.template);
-            this.$el.html(tmpl(this.model.toJSON()));
+            this.$el.html(this.template(this.model.toJSON()));
             return this;
+        },
+
+        events: {
+            "click button.delete": "del",
+            "click button.edit": "editData",
+            "click button.save": "saveEdit",
+            "click button.cancel": "cancelEdit"
+        },
+
+        del: function() {
+            this.model.destroy();
+            this.remove();
+        },
+
+        editData: function() {
+            this.$el.html(this.editTemplate(this.model.toJSON()));
+        },
+
+        saveEdit: function(e) {
+            e.preventDefault();
+            var formData = {},
+                prev = this.model.previousAttributes();
+            $(e.target).closest("form").find(":input").not("button").each(function() {
+                var el = $(this);
+                formData[el.attr("class")] = el.val();
+            });
+            this.model.set(formData);
+            this.render();
+        },
+
+        cancelEdit: function() {
+            this.render();
         }
     });
 
@@ -356,6 +560,19 @@ $(function() {
         initialize: function() {
             this.collection = collections.linkList;
             this.render();
+            var models = this.collection.models;
+            for (var i = 0; i < models.length; i++) {
+                models[i].on("change", this.write, this);
+            }
+            this.collection.on("add", this.renderLink, this);
+            this.collection.on("add", this.write, this);
+            this.collection.on("remove", this.write, this);
+            this.showForm();
+        },
+
+        events: {
+            "click .add": "add",
+            "click #showLinkForm": "showForm"
         },
 
         render: function() {
@@ -370,6 +587,31 @@ $(function() {
                 model: item
             });
             this.$el.append(linkView.render().el);
+        },
+        
+        add: function(e) {
+            e.preventDefault();
+
+            var newModel = {};
+            $("#addLink").children("input").each(function(i, el) {
+                if ($(el).val() !== "") {
+                    newModel[el.id] = $(el).val();
+                }
+            });
+            
+            this.collection.add(new UsefulLink(newModel));
+        },
+
+        showForm: function() {
+            this.$el.find("#addLink").slideToggle();
+        },
+
+        write: function() {
+            writeJson("usefulLinks", this.collection, true);
+        },
+
+        writeTemp: function() {
+            writeJson("deadlines", this.collection, false);
         }
     });
 
@@ -387,12 +629,44 @@ $(function() {
 
     var ProductView = Backbone.View.extend({
         tagName: "div",
-        template: $("#productTemplate").html(),
+        template: _.template($("#productTemplate").html()),
+        editTemplate: _.template($("#productEditTemplate").html()),
 
         render: function() {
-            var tmpl = _.template(this.template);
-            this.$el.html(tmpl(this.model.toJSON()));
+            this.$el.html(this.template(this.model.toJSON()));
             return this;
+        },
+
+        events: {
+            "click button.delete": "del",
+            "click button.edit": "editData",
+            "click button.save": "saveEdit",
+            "click button.cancel": "cancelEdit"
+        },
+
+        del: function() {
+            this.model.destroy();
+            this.remove();
+        },
+
+        editData: function() {
+            this.$el.html(this.editTemplate(this.model.toJSON()));
+        },
+
+        saveEdit: function(e) {
+            e.preventDefault();
+            var formData = {},
+                prev = this.model.previousAttributes();
+            $(e.target).closest("form").find(":input").not("button").each(function() {
+                var el = $(this);
+                formData[el.attr("class")] = el.val();
+            });
+            this.model.set(formData);
+            this.render();
+        },
+
+        cancelEdit: function() {
+            this.render();
         }
     });
 
@@ -402,6 +676,19 @@ $(function() {
         initialize: function() {
             this.collection = collections.startUpList;
             this.render();
+            var models = this.collection.models;
+            for (var i = 0; i < models.length; i++) {
+                models[i].on("change", this.write, this);
+            }
+            this.collection.on("add", this.renderProduct, this);
+            this.collection.on("add", this.write, this);
+            this.collection.on("remove", this.write, this);
+            this.showForm();
+        },
+
+        events: {
+            "click .add": "add",
+            "click #showStartUpForm": "showForm"
         },
 
         render: function() {
@@ -416,6 +703,31 @@ $(function() {
                 model: item
             });
             this.$el.append(productView.render().el);
+        },
+        
+        add: function(e) {
+            e.preventDefault();
+
+            var newModel = {};
+            $("#addStartUp").children("input").each(function(i, el) {
+                if ($(el).val() !== "") {
+                    newModel[el.id] = $(el).val();
+                }
+            });
+            
+            this.collection.add(new Product(newModel));
+        },
+
+        showForm: function() {
+            this.$el.find("#addStartUp").slideToggle();
+        },
+
+        write: function() {
+            writeJson("startUp", this.collection, true);
+        },
+
+        writeTemp: function() {
+            writeJson("deadlines", this.collection, false);
         }
     });
 
@@ -425,6 +737,19 @@ $(function() {
         initialize: function() {
             this.collection = collections.operationalList;
             this.render();
+            var models = this.collection.models;
+            for (var i = 0; i < models.length; i++) {
+                models[i].on("change", this.write, this);
+            }
+            this.collection.on("add", this.renderProduct, this);
+            this.collection.on("add", this.write, this);
+            this.collection.on("remove", this.write, this);
+            this.showForm();
+        },
+
+        events: {
+            "click .add": "add",
+            "click #showOperationalForm": "showForm"
         },
 
         render: function() {
@@ -439,6 +764,31 @@ $(function() {
                 model: item
             });
             this.$el.append(productView.render().el);
+        },
+        
+        add: function(e) {
+            e.preventDefault();
+
+            var newModel = {};
+            $("#addOperational").children("input").each(function(i, el) {
+                if ($(el).val() !== "") {
+                    newModel[el.id] = $(el).val();
+                }
+            });
+            
+            this.collection.add(new Product(newModel));
+        },
+
+        showForm: function() {
+            this.$el.find("#addOperational").slideToggle();
+        },
+
+        write: function() {
+            writeJson("operational", this.collection, true);
+        },
+
+        writeTemp: function() {
+            writeJson("deadlines", this.collection, false);
         }
     });
 
@@ -448,6 +798,19 @@ $(function() {
         initialize: function() {
             this.collection = collections.passiveList;
             this.render();
+            var models = this.collection.models;
+            for (var i = 0; i < models.length; i++) {
+                models[i].on("change", this.write, this);
+            }
+            this.collection.on("add", this.renderProduct, this);
+            this.collection.on("add", this.write, this);
+            this.collection.on("remove", this.write, this);
+            this.showForm();
+        },
+
+        events: {
+            "click .add": "add",
+            "click #showPassiveForm": "showForm"
         },
 
         render: function() {
@@ -462,24 +825,46 @@ $(function() {
                 model: item
             });
             this.$el.append(productView.render().el);
+        },
+        
+        add: function(e) {
+            e.preventDefault();
+
+            var newModel = {};
+            $("#addPassive").children("input").each(function(i, el) {
+                if ($(el).val() !== "") {
+                    newModel[el.id] = $(el).val();
+                }
+            });
+            
+            this.collection.add(new Product(newModel));
+        },
+
+        showForm: function() {
+            this.$el.find("#addPassive").slideToggle();
+        },
+
+        write: function() {
+            writeJson("passive", this.collection, true);
+        },
+
+        writeTemp: function() {
+            writeJson("deadlines", this.collection, false);
         }
     });
 
     var Collections = Backbone.Model.extend({
-        initialize: function() {
-            this.fetchCollections();
-        },
 
-        fetchCollections: function() {
-            this.budgetList = new GraphDataList(jsonData.budget);
-            this.investmentList = new GraphDataList(jsonData.investment);
-            this.teamSatisfactionList = new GraphDataList(jsonData.teamSatisfaction);
-            this.deadlineList = new DeadlineList(jsonData.deadlines);
-            this.newsList = new NewsList(jsonData.newsFeed);
-            this.linkList = new LinkList(jsonData.usefulLinks);
-            this.startUpList = new ProductList(jsonData.startUp);
-            this.operationalList = new ProductList(jsonData.operational);
-            this.passiveList = new ProductList(jsonData.passive);
+        fetchCollections: function(data) {
+            this.budgetList = new GraphDataList(data.budget);
+            this.investmentList = new GraphDataList(data.investment);
+            this.teamSatisfactionList = new GraphDataList(data.teamSatisfaction);
+            this.deadlineList = new DeadlineList(data.deadlines);
+            this.newsList = new NewsList(data.newsFeed);
+            this.linkList = new LinkList(data.usefulLinks);
+            this.startUpList = new ProductList(data.startUp);
+            this.operationalList = new ProductList(data.operational);
+            this.passiveList = new ProductList(data.passive);
         }
     });
 
@@ -488,6 +873,7 @@ $(function() {
     var EndGameIntranetView = Backbone.View.extend({
         initialize: function() {
             collections = new Collections();
+            collections.fetchCollections(jsonData);
             this.render();
         },
 
@@ -518,7 +904,6 @@ $(function() {
         },
         success: function(data) {
             jsonData = data;
-            console.log(jsonData);
             var masterView = new EndGameIntranetView();
         },
         error: function() {
