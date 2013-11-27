@@ -76,6 +76,25 @@ $(function() {
         });
     }
 
+    var dateSort = function(model1, model2) {
+        var date1 = model1.get("date").split(".");
+        var date2 = model2.get("date").split(".");
+        if (date1[2] === date2[2] || isNaN(date1[2]) || isNaN(date2[2]) || date1[2] === undefined || date2[2] === undefined) {
+            if (date1[1] === date2[1] || isNaN(date1[1]) || isNaN(date2[1]) || date1[1] === undefined || date2[1] === undefined) {
+                if (date1[0] === date2[0] || isNaN(date1[0]) || isNaN(date2[0]) || date1[0] === undefined || date2[0] === undefined) {
+                    return 0;
+                }
+                return (date1[0] < date2[0]) ? -1 : 1;
+            }
+            return (date1[1] < date2[1]) ? -1 : 1;
+        }
+        return (date1[2] < date2[2]) ? -1 : 1;
+    };
+
+    var reverseDateSort = function(model1, model2) {
+        return dateSort(model2, model1);
+    };
+
     var GraphData = Backbone.Model.extend({
         defaults: {
             dataTitle: "",
@@ -150,6 +169,7 @@ $(function() {
                 that.renderGraphData(item);
             }, this);
             this.renderGraph();
+            return this;
         },
 
         renderGraphData: function(item) {
@@ -195,6 +215,7 @@ $(function() {
                 that.renderGraphData(item);
             }, this);
             this.renderGraph();
+            return this;
         },
 
         renderGraphData: function(item) {
@@ -242,6 +263,7 @@ $(function() {
                 that.renderGraphData(item);
             }, this);
             this.renderGraph();
+            return this;
         },
 
         renderGraphData: function(item) {
@@ -327,6 +349,8 @@ $(function() {
 
         initialize: function() {
             this.collection = collections.deadlineList;
+            this.collection.comparator = dateSort;
+            this.collection.sort();
             this.render();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
@@ -348,6 +372,7 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderDeadline(item);
             }, this);
+            return this;
         },
 
         renderDeadline: function(item) {
@@ -356,7 +381,7 @@ $(function() {
             });
             this.$el.append(deadlineView.render().el);
         },
-        
+
         add: function(e) {
             e.preventDefault();
 
@@ -366,10 +391,10 @@ $(function() {
                     newModel[el.id] = $(el).val();
                 }
             });
-            
+
             this.collection.add(new Deadline(newModel));
         },
-        
+
         showForm: function() {
             this.$el.find("#addDeadline").slideToggle();
         },
@@ -443,6 +468,8 @@ $(function() {
 
         initialize: function() {
             this.collection = collections.newsList;
+            this.collection.comparator = reverseDateSort;
+            this.collection.sort();
             this.render();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
@@ -464,6 +491,7 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderNews(item);
             }, this);
+            return this;
         },
 
         renderNews: function(item) {
@@ -472,7 +500,7 @@ $(function() {
             });
             this.$el.append(newsView.render().el);
         },
-        
+
         add: function(e) {
             e.preventDefault();
 
@@ -482,7 +510,7 @@ $(function() {
                     newModel[el.id] = $(el).val();
                 }
             });
-            
+
             this.collection.add(new News(newModel));
         },
 
@@ -580,6 +608,7 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderLink(item);
             }, this);
+            return this;
         },
 
         renderLink: function(item) {
@@ -588,7 +617,7 @@ $(function() {
             });
             this.$el.append(linkView.render().el);
         },
-        
+
         add: function(e) {
             e.preventDefault();
 
@@ -598,7 +627,7 @@ $(function() {
                     newModel[el.id] = $(el).val();
                 }
             });
-            
+
             this.collection.add(new UsefulLink(newModel));
         },
 
@@ -696,6 +725,7 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderProduct(item);
             }, this);
+            return this;
         },
 
         renderProduct: function(item) {
@@ -704,7 +734,7 @@ $(function() {
             });
             this.$el.append(productView.render().el);
         },
-        
+
         add: function(e) {
             e.preventDefault();
 
@@ -714,8 +744,9 @@ $(function() {
                     newModel[el.id] = $(el).val();
                 }
             });
-            
+
             this.collection.add(new Product(newModel));
+            this.collection.sort();
         },
 
         showForm: function() {
@@ -757,6 +788,7 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderProduct(item);
             }, this);
+            return this;
         },
 
         renderProduct: function(item) {
@@ -765,7 +797,7 @@ $(function() {
             });
             this.$el.append(productView.render().el);
         },
-        
+
         add: function(e) {
             e.preventDefault();
 
@@ -775,7 +807,7 @@ $(function() {
                     newModel[el.id] = $(el).val();
                 }
             });
-            
+
             this.collection.add(new Product(newModel));
         },
 
@@ -818,6 +850,7 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderProduct(item);
             }, this);
+            return this;
         },
 
         renderProduct: function(item) {
@@ -826,7 +859,7 @@ $(function() {
             });
             this.$el.append(productView.render().el);
         },
-        
+
         add: function(e) {
             e.preventDefault();
 
@@ -836,7 +869,7 @@ $(function() {
                     newModel[el.id] = $(el).val();
                 }
             });
-            
+
             this.collection.add(new Product(newModel));
         },
 
@@ -887,6 +920,7 @@ $(function() {
             var startUpListView = new StartUpListView();
             var operationalListView = new OperationalListView();
             var passiveListView = new PassiveListView();
+            return this;
         }
     });
 

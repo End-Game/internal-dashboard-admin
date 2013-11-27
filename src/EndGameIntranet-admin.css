@@ -6,6 +6,8 @@
 	width: 960px;
 	margin-left: auto;
 	margin-right: auto;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 #top_green {
@@ -31,6 +33,7 @@
 }
 
 #top_green #p2 {
+	margin-top: -25px;
 	font-size: 48px;
 	color: white;
 	text-align: center;
@@ -39,8 +42,8 @@
 .col_container {
 	width: 960px;
 	display: block;
-	padding-top: 25px;
-	padding-bottom: 50px;
+	padding-top: 10px;
+	padding-bottom: 40px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -118,10 +121,16 @@ hr {
 #deadlines_block {
 	border-top: 2px dashed #b3b3b3;
 	border-bottom: 2px dashed #b3b3b3;
+	padding-bottom: 80px;
 }
 
 #deadlines_block > div {
 	vertical-align: top;
+}
+
+div div div{	
+	margin-top: -10px;
+	margin-bottom: -15px; 
 }
 
 #deadlines div:first-of-type{
@@ -146,9 +155,10 @@ hr {
 
 .date_text {
 	display: inline-block;
-	width: 60px;
+	width: 70px;
 	font-size: 21px;
 	font-variant: small-caps;
+	font-weight: bold;
 	color: #80c99c;
 	vertical-align: top;
 	margin-right: 10px;
@@ -162,7 +172,7 @@ hr {
 }
 
 #deadlines .text {
-	width: 220px;
+	width: 210px;
 }
 
 #news_feed div:first-of-type {
@@ -171,17 +181,26 @@ hr {
 	border-bottom: 2px dashed #b3b3b3;
 }
 
+#news_feed div:first-of-type .text{
+	margin-top: 10px;
+}
+
+#news_feed div:first-of-type .date_text{
+	margin-top: 10px;
+}
+
 #news_feed div{
 	border-bottom: 2px dashed #b3b3b3;
 }
 
 #news_feed .text {
-	width: 220px;
+	width: 210px;
 }
 
 .author_text {
-	margin-left: 75px;
+	margin-left: 85px;
 	margin-top: -20px;
+	margin-bottom: 10px;
 	width: 220px;
 	font-size: 21px;
 	font-variant: small-caps;
@@ -200,6 +219,12 @@ a {
 	vertical-align: top;
 }
 
+#products_block > div div{
+	vertical-align: top;
+	margin-top: -10px;
+	margin-bottom: -10px;
+}
+
 .bold_title {
 	margin-bottom: 30px;
 	font-size: 36px;
@@ -213,7 +238,7 @@ a {
 }
 
 .small_text {
-	display: block;
+	display: inline-block;
 	margin-top: -10px;
 	font-size: 18px;
 	font-style: italic;
@@ -223,7 +248,7 @@ a {
 
 #time_block {
 	background-color: #80C99C;
-	padding-top: 25px;
+	padding-top: 10px;
 	padding-bottom: 25px;
 	margin-left: -10px;
 	margin-right: -10px;
