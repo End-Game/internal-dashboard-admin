@@ -1,6 +1,7 @@
-$(function() {
+define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
+    'use strict';
 
-    function shadeColor(color, percent) {
+    Intranet.shadeColor = function(color, percent) {
         var R = parseInt(color.substring(1, 3), 16);
         var G = parseInt(color.substring(3, 5), 16);
         var B = parseInt(color.substring(5, 7), 16);
@@ -18,65 +19,38 @@ $(function() {
         var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
 
         return "#" + RR + GG + BB;
-    }
+    };
 
-    function drawGraph(ctx, percent, colour) {
+    Intranet.drawGraph = function(ctx, percent, colour) {
         do {
             ctx.beginPath();
             ctx.arc(100, 100, 80, Math.PI * 3 / 2 + 2 * Math.PI * percent, Math.PI * 3 / 2, true);
             ctx.arc(100, 100, 100, Math.PI * 3 / 2, Math.PI * 3 / 2 + 2 * Math.PI * percent);
             ctx.fillStyle = colour;
             ctx.fill();
-            colour = shadeColor(colour, -40);
+            colour = Intranet.shadeColor(colour, -40);
             percent -= 1;
         } while (percent > 0);
-    }
+    };
 
-    function writeFullJson() {
-        jsonData = {};
-        jsonData.budget = collections.budgetList.toJSON();
-        jsonData.investment = collections.investmentList.toJSON();
-        jsonData.teamSatisfaction = collections.teamSatisfactionList.toJSON();
-        jsonData.deadlines = collections.deadlineList.toJSON();
-        jsonData.newsFeed = collections.newsList.toJSON();
-        jsonData.usefulLinks = collections.linkList.toJSON();
-        jsonData.startUp = collections.startUpList.toJSON();
-        jsonData.operational = collections.operationalList.toJSON();
-        jsonData.passive = collections.passiveList.toJSON();
-        post();
-    }
-
-    function writeJson(item, list, toPost) {
-        jsonData[item] = list.toJSON();
+    Intranet.writeJson = function(item, list, toPost) {
+        Intranet.jsonData[item] = list.toJSON();
         if (toPost) {
-            post();
+            Intranet.post();
         } else {
-            console.log(jsonData);
+            console.log(Intranet.jsonData);
         }
-    }
+    };
 
-    function post() {
-        $.ajax({
-            url: "https://data.hoi.io/EndGamePortal/data",
-            type: "POST",
-            xhrFields: {
-                withCredentials: true
-            },
-            crossDomain: true,
-            headers: {
-                "Authorization": "Hoist NTUOLFDMGAPGMVT[LOIX"
-            },
-            data: jsonData,
-            success: function() {
-                console.log("data post successful");
-            },
-            error: function() {
-                console.log("data post unsuccessful");
-            }
+    Intranet.post = function() {
+        hoist.postData(Intranet.jsonData, function() {
+            console.log("data post successful");
+        }, function() {
+            console.log("data post unsuccessful");
         });
-    }
+    };
 
-    var dateSort = function(model1, model2) {
+    Intranet.dateSort = function(model1, model2) {
         var date1 = model1.get("date").split(".");
         var date2 = model2.get("date").split(".");
         if (date1[2] === date2[2] || isNaN(date1[2]) || isNaN(date2[2]) || date1[2] === undefined || date2[2] === undefined) {
@@ -91,22 +65,11 @@ $(function() {
         return (date1[2] < date2[2]) ? -1 : 1;
     };
 
-    var reverseDateSort = function(model1, model2) {
-        return dateSort(model2, model1);
+    Intranet.reverseDateSort = function(model1, model2) {
+        return Intranet.dateSort(model2, model1);
     };
 
-    var GraphData = Backbone.Model.extend({
-        defaults: {
-            dataTitle: "",
-            data: ""
-        }
-    });
-
-    var GraphDataList = Backbone.Collection.extend({
-        model: GraphData
-    });
-
-    var GraphDataView = Backbone.View.extend({
+    Intranet.GraphDataView = Backbone.View.extend({
         tagName: "p",
         className: "textSC",
         template: _.template($("#graphDataTemplate").html()),
@@ -135,8 +98,7 @@ $(function() {
 
         saveEdit: function(e) {
             e.preventDefault();
-            var formData = {},
-                prev = this.model.previousAttributes();
+            var formData = {};
             $(e.target).closest("form").find(":input").not("button").each(function() {
                 var el = $(this);
                 formData[el.attr("class")] = el.val();
@@ -150,12 +112,13 @@ $(function() {
         }
     });
 
-    var BudgetView = Backbone.View.extend({
-        el: "#budget",
-
-        initialize: function() {
-            this.collection = collections.budgetList;
-            this.render();
+    Intranet.GraphDataListView = Backbone.View.extend({
+        render: function() {
+            var that = this;
+            _.each(this.collection.models, function(item) {
+                that.renderGraphData(item);
+            }, this);
+            this.renderGraph();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
                 models[i].on("change", this.renderGraph, this);
@@ -163,20 +126,22 @@ $(function() {
             }
         },
 
-        render: function() {
-            var that = this;
-            _.each(this.collection.models, function(item) {
-                that.renderGraphData(item);
-            }, this);
-            this.renderGraph();
-            return this;
-        },
-
         renderGraphData: function(item) {
-            var graphDataView = new GraphDataView({
+            var graphDataView = new Intranet.GraphDataView({
                 model: item
             });
             this.$el.append(graphDataView.render().el);
+        },
+
+        write: function() {}
+    });
+
+    Intranet.BudgetView = Intranet.GraphDataListView.extend({
+        el: "#budget",
+
+        initialize: function() {
+            this.collection = Intranet.collections.budgetList;
+            this.render();
         },
 
         renderGraph: function() {
@@ -186,43 +151,23 @@ $(function() {
             var actual = this.collection.models[1].get("data");
             target = parseFloat(target.substring(1, target.length));
             actual = parseFloat(actual.substring(1, actual.length));
-            percent = actual / target;
+            var percent = actual / target;
             var colour = "#80C99C";
-            drawGraph(ctx, percent, colour);
+            Intranet.drawGraph(ctx, percent, colour);
         },
 
         write: function() {
-            writeJson("budget", this.collection, true);
+            Intranet.writeJson("budget", this.collection, true);
         }
     });
 
-    var InvestmentView = Backbone.View.extend({
+    Intranet.InvestmentView = Intranet.GraphDataListView.extend({
         el: "#investment",
 
         initialize: function() {
-            this.collection = collections.investmentList;
+            this.collection = Intranet.collections.investmentList;
             this.render();
-            var models = this.collection.models;
-            for (var i = 0; i < models.length; i++) {
-                models[i].on("change", this.renderGraph, this);
-                models[i].on("change", this.write, this);
-            }
-        },
-
-        render: function() {
-            var that = this;
-            _.each(this.collection.models, function(item) {
-                that.renderGraphData(item);
-            }, this);
             this.renderGraph();
-            return this;
-        },
-
-        renderGraphData: function(item) {
-            var graphDataView = new GraphDataView({
-                model: item
-            });
-            this.$el.append(graphDataView.render().el);
         },
 
         renderGraph: function() {
@@ -233,44 +178,24 @@ $(function() {
             var actual = this.collection.models[0].get("data");
             target = parseFloat(target.substring(0, target.length - 1));
             actual = parseFloat(actual.substring(0, actual.length - 1));
-            percent = actual / target;
+            var percent = actual / target;
             var colour = "#D82253";
-            drawGraph(ctx, percent, colour);
+            Intranet.drawGraph(ctx, percent, colour);
         },
 
         write: function() {
-            writeJson("investment", this.collection, true);
+            Intranet.writeJson("investment", this.collection, true);
         }
+
     });
 
-    var TeamSatisfactionView = Backbone.View.extend({
+    Intranet.TeamSatisfactionView = Intranet.GraphDataListView.extend({
         el: "#team_satisfaction",
 
         initialize: function() {
-            this.collection = collections.teamSatisfactionList;
+            this.collection = Intranet.collections.teamSatisfactionList;
             this.render();
-            var models = this.collection.models;
-            for (var i = 0; i < models.length; i++) {
-                models[i].on("change", this.renderGraph, this);
-                models[i].on("change", this.write, this);
-            }
-
-        },
-
-        render: function() {
-            var that = this;
-            _.each(this.collection.models, function(item) {
-                that.renderGraphData(item);
-            }, this);
             this.renderGraph();
-            return this;
-        },
-
-        renderGraphData: function(item) {
-            var graphDataView = new GraphDataView({
-                model: item
-            });
-            this.$el.append(graphDataView.render().el);
         },
 
         renderGraph: function() {
@@ -280,28 +205,17 @@ $(function() {
             var actual = this.collection.models[1].get("data");
             target = parseFloat(target.substring(0, target.length - 1));
             actual = parseFloat(actual.substring(0, actual.length - 1));
-            percent = actual / target;
+            var percent = actual / target;
             var colour = "#666666";
-            drawGraph(ctx, percent, colour);
+            Intranet.drawGraph(ctx, percent, colour);
         },
 
         write: function() {
-            writeJson("teamSatisfaction", this.collection, true);
+            Intranet.writeJson("teamSatisfaction", this.collection, true);
         }
     });
 
-    var Deadline = Backbone.Model.extend({
-        defaults: {
-            date: "",
-            task: ""
-        }
-    });
-
-    var DeadlineList = Backbone.Collection.extend({
-        model: Deadline
-    });
-
-    var DeadlineView = Backbone.View.extend({
+    Intranet.DeadlineView = Backbone.View.extend({
         tagName: "div",
         template: _.template($("#deadlineTemplate").html()),
         editTemplate: _.template($("#deadlineEditTemplate").html()),
@@ -329,8 +243,7 @@ $(function() {
 
         saveEdit: function(e) {
             e.preventDefault();
-            var formData = {},
-                prev = this.model.previousAttributes();
+            var formData = {};
             $(e.target).closest("form").find(":input").not("button").each(function() {
                 var el = $(this);
                 formData[el.attr("class")] = el.val();
@@ -344,12 +257,12 @@ $(function() {
         }
     });
 
-    var DeadlineListView = Backbone.View.extend({
+    Intranet.DeadlineListView = Backbone.View.extend({
         el: "#deadlines",
 
         initialize: function() {
-            this.collection = collections.deadlineList;
-            this.collection.comparator = dateSort;
+            this.collection = Intranet.collections.deadlineList;
+            this.collection.comparator = Intranet.dateSort;
             this.collection.sort();
             this.render();
             var models = this.collection.models;
@@ -376,7 +289,7 @@ $(function() {
         },
 
         renderDeadline: function(item) {
-            var deadlineView = new DeadlineView({
+            var deadlineView = new Intranet.DeadlineView({
                 model: item
             });
             this.$el.append(deadlineView.render().el);
@@ -392,7 +305,7 @@ $(function() {
                 }
             });
 
-            this.collection.add(new Deadline(newModel));
+            this.collection.add(new Intranet.Deadline(newModel));
         },
 
         showForm: function() {
@@ -400,27 +313,15 @@ $(function() {
         },
 
         write: function() {
-            writeJson("deadlines", this.collection, true);
+            Intranet.writeJson("deadlines", this.collection, true);
         },
 
         writeTemp: function() {
-            writeJson("deadlines", this.collection, false);
+            Intranet.writeJson("deadlines", this.collection, false);
         }
     });
 
-    var News = Backbone.Model.extend({
-        defaults: {
-            date: "",
-            news: "",
-            author: ""
-        }
-    });
-
-    var NewsList = Backbone.Collection.extend({
-        model: News
-    });
-
-    var NewsView = Backbone.View.extend({
+    Intranet.NewsView = Backbone.View.extend({
         tagName: "div",
         template: _.template($("#newsTemplate").html()),
         editTemplate: _.template($("#newsEditTemplate").html()),
@@ -448,8 +349,7 @@ $(function() {
 
         saveEdit: function(e) {
             e.preventDefault();
-            var formData = {},
-                prev = this.model.previousAttributes();
+            var formData = {};
             $(e.target).closest("form").find(":input").not("button").each(function() {
                 var el = $(this);
                 formData[el.attr("class")] = el.val();
@@ -463,12 +363,12 @@ $(function() {
         }
     });
 
-    var NewsListView = Backbone.View.extend({
+    Intranet.NewsListView = Backbone.View.extend({
         el: "#news_feed",
 
         initialize: function() {
-            this.collection = collections.newsList;
-            this.collection.comparator = reverseDateSort;
+            this.collection = Intranet.collections.newsList;
+            this.collection.comparator = Intranet.reverseDateSort;
             this.collection.sort();
             this.render();
             var models = this.collection.models;
@@ -495,7 +395,7 @@ $(function() {
         },
 
         renderNews: function(item) {
-            var newsView = new NewsView({
+            var newsView = new Intranet.NewsView({
                 model: item
             });
             this.$el.append(newsView.render().el);
@@ -519,27 +419,15 @@ $(function() {
         },
 
         write: function() {
-            writeJson("newsFeed", this.collection, true);
+            Intranet.writeJson("newsFeed", this.collection, true);
         },
 
         writeTemp: function() {
-            writeJson("deadlines", this.collection, false);
+            Intranet.writeJson("deadlines", this.collection, false);
         }
     });
 
-    var UsefulLink = Backbone.Model.extend({
-        defaults: {
-            link: "",
-            name: "",
-            description: ""
-        }
-    });
-
-    var LinkList = Backbone.Collection.extend({
-        model: UsefulLink
-    });
-
-    var LinkView = Backbone.View.extend({
+    Intranet.LinkView = Backbone.View.extend({
         tagName: "div",
         template: _.template($("#linkTemplate").html()),
         editTemplate: _.template($("#linkEditTemplate").html()),
@@ -567,8 +455,7 @@ $(function() {
 
         saveEdit: function(e) {
             e.preventDefault();
-            var formData = {},
-                prev = this.model.previousAttributes();
+            var formData = {};
             $(e.target).closest("form").find(":input").not("button").each(function() {
                 var el = $(this);
                 formData[el.attr("class")] = el.val();
@@ -582,11 +469,11 @@ $(function() {
         }
     });
 
-    var LinkListView = Backbone.View.extend({
+    Intranet.LinkListView = Backbone.View.extend({
         el: "#useful_links",
 
         initialize: function() {
-            this.collection = collections.linkList;
+            this.collection = Intranet.collections.linkList;
             this.render();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
@@ -608,11 +495,10 @@ $(function() {
             _.each(this.collection.models, function(item) {
                 that.renderLink(item);
             }, this);
-            return this;
         },
 
         renderLink: function(item) {
-            var linkView = new LinkView({
+            var linkView = new Intranet.LinkView({
                 model: item
             });
             this.$el.append(linkView.render().el);
@@ -644,19 +530,7 @@ $(function() {
         }
     });
 
-    var Product = Backbone.Model.extend({
-        defaults: {
-            name: "",
-            dots: "",
-            description: ""
-        }
-    });
-
-    var ProductList = Backbone.Collection.extend({
-        model: Product
-    });
-
-    var ProductView = Backbone.View.extend({
+    Intranet.ProductView = Backbone.View.extend({
         tagName: "div",
         template: _.template($("#productTemplate").html()),
         editTemplate: _.template($("#productEditTemplate").html()),
@@ -684,8 +558,7 @@ $(function() {
 
         saveEdit: function(e) {
             e.preventDefault();
-            var formData = {},
-                prev = this.model.previousAttributes();
+            var formData = {};
             $(e.target).closest("form").find(":input").not("button").each(function() {
                 var el = $(this);
                 formData[el.attr("class")] = el.val();
@@ -699,11 +572,27 @@ $(function() {
         }
     });
 
-    var StartUpListView = Backbone.View.extend({
+    Intranet.ProductListView = Backbone.View.extend({
+        render: function() {
+            var that = this;
+            _.each(this.collection.models, function(item) {
+                that.renderProduct(item);
+            }, this);
+        },
+
+        renderProduct: function(item) {
+            var productView = new Intranet.ProductView({
+                model: item
+            });
+            this.$el.append(productView.render().el);
+        }
+    });
+
+    Intranet.StartUpListView = Intranet.ProductListView.extend({
         el: "#start_up",
 
         initialize: function() {
-            this.collection = collections.startUpList;
+            this.collection = Intranet.collections.startUpList;
             this.render();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
@@ -718,21 +607,6 @@ $(function() {
         events: {
             "click .add": "add",
             "click #showStartUpForm": "showForm"
-        },
-
-        render: function() {
-            var that = this;
-            _.each(this.collection.models, function(item) {
-                that.renderProduct(item);
-            }, this);
-            return this;
-        },
-
-        renderProduct: function(item) {
-            var productView = new ProductView({
-                model: item
-            });
-            this.$el.append(productView.render().el);
         },
 
         add: function(e) {
@@ -758,15 +632,15 @@ $(function() {
         },
 
         writeTemp: function() {
-            writeJson("deadlines", this.collection, false);
+            writeJson("startUp", this.collection, false);
         }
     });
 
-    var OperationalListView = Backbone.View.extend({
+    Intranet.OperationalListView = Intranet.ProductListView.extend({
         el: "#operational",
 
         initialize: function() {
-            this.collection = collections.operationalList;
+            this.collection = Intranet.collections.operationalList;
             this.render();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
@@ -781,21 +655,6 @@ $(function() {
         events: {
             "click .add": "add",
             "click #showOperationalForm": "showForm"
-        },
-
-        render: function() {
-            var that = this;
-            _.each(this.collection.models, function(item) {
-                that.renderProduct(item);
-            }, this);
-            return this;
-        },
-
-        renderProduct: function(item) {
-            var productView = new ProductView({
-                model: item
-            });
-            this.$el.append(productView.render().el);
         },
 
         add: function(e) {
@@ -820,15 +679,15 @@ $(function() {
         },
 
         writeTemp: function() {
-            writeJson("deadlines", this.collection, false);
+            writeJson("operational", this.collection, false);
         }
     });
 
-    var PassiveListView = Backbone.View.extend({
+    Intranet.PassiveListView = Intranet.ProductListView.extend({
         el: "#passive",
 
         initialize: function() {
-            this.collection = collections.passiveList;
+            this.collection = Intranet.collections.passiveList;
             this.render();
             var models = this.collection.models;
             for (var i = 0; i < models.length; i++) {
@@ -843,21 +702,6 @@ $(function() {
         events: {
             "click .add": "add",
             "click #showPassiveForm": "showForm"
-        },
-
-        render: function() {
-            var that = this;
-            _.each(this.collection.models, function(item) {
-                that.renderProduct(item);
-            }, this);
-            return this;
-        },
-
-        renderProduct: function(item) {
-            var productView = new ProductView({
-                model: item
-            });
-            this.$el.append(productView.render().el);
         },
 
         add: function(e) {
@@ -882,68 +726,103 @@ $(function() {
         },
 
         writeTemp: function() {
-            writeJson("deadlines", this.collection, false);
+            writeJson("passive", this.collection, false);
         }
     });
 
-    var Collections = Backbone.Model.extend({
-
-        fetchCollections: function(data) {
-            this.budgetList = new GraphDataList(data.budget);
-            this.investmentList = new GraphDataList(data.investment);
-            this.teamSatisfactionList = new GraphDataList(data.teamSatisfaction);
-            this.deadlineList = new DeadlineList(data.deadlines);
-            this.newsList = new NewsList(data.newsFeed);
-            this.linkList = new LinkList(data.usefulLinks);
-            this.startUpList = new ProductList(data.startUp);
-            this.operationalList = new ProductList(data.operational);
-            this.passiveList = new ProductList(data.passive);
-        }
-    });
-
-    var collections = "";
-
-    var EndGameIntranetView = Backbone.View.extend({
+    Intranet.EndGameIntranetView = Backbone.View.extend({
         initialize: function() {
-            collections = new Collections();
-            collections.fetchCollections(jsonData);
+            Intranet.collections = new Intranet.Collections();
+            Intranet.collections.fetchCollections(Intranet.jsonData);
             this.render();
         },
 
         render: function() {
-            var bugetView = new BudgetView();
-            var investmentView = new InvestmentView();
-            var teamSatisfactionView = new TeamSatisfactionView();
-            var deadlineListView = new DeadlineListView();
-            var newsListView = new NewsListView();
-            var linkListView = new LinkListView();
-            var startUpListView = new StartUpListView();
-            var operationalListView = new OperationalListView();
-            var passiveListView = new PassiveListView();
+            var bugetView = new Intranet.BudgetView();
+            var investmentView = new Intranet.InvestmentView();
+            var teamSatisfactionView = new Intranet.TeamSatisfactionView();
+            var deadlineListView = new Intranet.DeadlineListView();
+            var newsListView = new Intranet.NewsListView();
+            var linkListView = new Intranet.LinkListView();
+            var startUpListView = new Intranet.StartUpListView();
+            var operationalListView = new Intranet.OperationalListView();
+            var passiveListView = new Intranet.PassiveListView();
             return this;
         }
     });
 
-    var jsonData = "";
-    $.ajax({
-        url: "https://data.hoi.io/EndGamePortal/data",
-        type: "GET",
-        dataType: "json",
-        xhrFields: {
-            withCredentials: true
+    Intranet.View = Backbone.View.extend({
+
+        initialize: function() {
+            if (!this.$el.hasClass('modal')) {
+                $('section').hide();
+            }
+
+            this.$el.show();
         },
-        crossDomain: true,
-        headers: {
-            "Authorization": "Hoist NTUOLFDMGAPGMVT[LOIX"
+    });
+
+    Intranet.Login = Intranet.View.extend({
+
+        events: {
+            'click .login a': 'login',
+            'click .signup a': 'signup'
         },
-        success: function(data) {
-            jsonData = data;
-            var masterView = new EndGameIntranetView();
+
+        el: '#Login',
+
+        login: function() {
+            hoist.login(this.$('#EmailAddress').val(), this.$('#Password').val(), function() {
+                console.log("login successful");
+                hoist.getData(function(data) {
+                    $('section').hide();
+                    Intranet.jsonData = data;
+                    new Intranet.EndGameIntranetView();
+                }, function() {
+                    console.log("data get unsuccessful");
+                });
+            }, function() {
+                console.log("login unsuccessful");
+            });
+            return false;
+
         },
-        error: function() {
-            console.log("data get unsuccessful");
+        signup: function() {
+            $('section').hide();
+            new Intranet.SignUp();
+        }
+
+    });
+
+    Intranet.SignUp = Intranet.View.extend({
+        events: {
+            'click .login a': 'login',
+            'click .signup a': 'signup'
+        },
+
+        el: '#SignUp',
+
+        signup: function() {
+            hoist.signup(this.$('#Name').val(), this.$('#EmailAddress').val(), this.$('#Password').val(), function() {
+                console.log("signup successful");
+                hoist.getData(function(data) {
+                    $('section').hide();
+                    Intranet.jsonData = data;
+                    new Intranet.EndGameIntranetView();
+                }, function() {
+                    console.log("data get unsuccessful");
+                });
+            }, function() {
+                console.log("signup unsuccessful");
+            });
+            return false;
+        },
+
+        login: function() {
+            $('section').hide();
+            new Intranet.Login();
         }
     });
 
-
-}(jQuery));
+    return Intranet;
+});

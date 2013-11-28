@@ -1,7 +1,17 @@
 module.exports = function(grunt) {
 	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
+		uglify: {
+			options: {
+				banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+			},
+			dist: {
+				files: ['app/**/*.js'],
+				dest: 'build/<%= pkg.name %>.min.js'
+			}
+		},
 		jshint: {
-			files: ['gruntfile.js', 'src/js/EndGameIntranet-admin.js'],
+			files: ['gruntfile.js', 'app/scripts/*.js'],
 			options: {
 				globals: {
 					jQuery: true,
@@ -19,7 +29,7 @@ module.exports = function(grunt) {
 				tasks: ['jshint']
 			},
 			html: {
-				files: ['src/**/*.html', 'src/**/*.css'],
+				files: ['app/*.html', 'app/*.css'],
 			}
 		},
 		express: {
@@ -27,7 +37,7 @@ module.exports = function(grunt) {
 				options: {
 					port: 9000,
 					hostname: "0.0.0.0",
-					bases: ['src/'],
+					bases: ['app/'],
 					livereload: true
 				}
 			}
@@ -38,10 +48,11 @@ module.exports = function(grunt) {
 			}
 		}
 	});
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-express');
 	grunt.loadNpmTasks('grunt-open');
-	grunt.registerTask('default', ['jshint']);
+	grunt.registerTask('default', ['jshint', 'uglify']);
 	grunt.registerTask('server', ['express', 'open', 'watch']);
 };

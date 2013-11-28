@@ -5,8 +5,8 @@
         <title>EndGame</title>
         <script type="text/javascript" src="https://use.typekit.net/pnr3zhl.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-        <script src="http://127.0.0.1:35729/livereload.js"></script>
-        <link rel="stylesheet" type="text/css" href="EndGameIntranet-admin.css">
+        <script src="https://127.0.0.1:35729/livereload.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
     <!--endgame logo-->
@@ -142,6 +142,92 @@
         </div>
         <p class="white_text">VIEW GRAPH</p>
     </div>
+    <section id="Login" class="modal">
+        <div class="content">
+            <div class="bar">
+                <span>Log in</span>
+            </div>
+
+            <fieldset>
+                <label for="EmailAddress">Email Address</label>
+                <div class="input-cage">
+                    <input type="text" id="EmailAddress" name="EmailAddress" />
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <label for="Password">Password</label>
+                <div class="input-cage">
+                    <input type="password" id="Password" name="Password" />
+                </div>
+            </fieldset>
+
+            <fieldset class="checkbox">
+                <input type="checkbox" id="RememberMe" name="RememberMe" />
+                <label for="RememberMe">Remember Me</label>
+            </fieldset>
+
+            <div class="button login">
+                <a href="javascript:">Log in</a>
+            </div>
+
+            <div class="bar">
+                <span>or</span>
+            </div>
+
+            <div class="big button signup">
+                <a href="javascript:">Sign up</a>
+            </div>
+        </div>
+    </section>
+    <section id="SignUp" class="modal">
+        <div class="content">
+            <div class="bar">
+                <span>Sign up</span>
+            </div>
+
+            <fieldset>
+                <label for="Name">Name</label>
+                <div class="input-cage">
+                    <input type="text" id="Name" name="Name" />
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <label for="EmailAddress">Email Address</label>
+                <div class="input-cage">
+                    <input type="text" id="EmailAddress" name="EmailAddress" />
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <label for="Password">Password</label>
+                <div class="input-cage">
+                    <input type="password" id="Password" name="Password" />
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <label for="RepeatPassword">Repeat Password</label>
+                <div class="input-cage">
+                    <input type="password" id="RepeatPassword" name="RepeatPassword" />
+                </div>
+            </fieldset>
+
+            <div class="button signup">
+                <a href="index.html">Sign up</a>
+            </div>
+            
+            <div class="bar">
+                <span>or</span>
+            </div>
+            
+            <div class="button login">
+                <a href="javascript:">Log in</a>
+            </div>
+
+        </div>
+    </section>
     <!-- templates -->
     <script id="graphDataTemplate" type="text/template">
         <span><%=dataTitle%>:</span> <%=data%>
@@ -215,9 +301,12 @@
             <button class="cancel">Cancel</button>
         </form>
     </script>
-    <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <script src="js/underscore-min.js"></script>
-    <script src="js/backbone-min.js"></script>
-    <script src='js/EndGameIntranet-admin.js'></script>
+    <!-- bower:js -->
+    <script src="bower_components/jquery/jquery.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js scripts/main.js -->
+    <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+    <!-- endbuild -->
 </body>
