@@ -411,7 +411,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
                 }
             });
 
-            this.collection.add(new News(newModel));
+            this.collection.add(new Intranet.News(newModel));
         },
 
         showForm: function() {
@@ -423,7 +423,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         writeTemp: function() {
-            Intranet.writeJson("deadlines", this.collection, false);
+            Intranet.writeJson("newsFeed", this.collection, false);
         }
     });
 
@@ -514,7 +514,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
                 }
             });
 
-            this.collection.add(new UsefulLink(newModel));
+            this.collection.add(new Intranet.UsefulLink(newModel));
         },
 
         showForm: function() {
@@ -522,11 +522,11 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         write: function() {
-            writeJson("usefulLinks", this.collection, true);
+            Intranet.writeJson("usefulLinks", this.collection, true);
         },
 
         writeTemp: function() {
-            writeJson("deadlines", this.collection, false);
+            Intranet.writeJson("usefulLinks", this.collection, false);
         }
     });
 
@@ -619,7 +619,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
                 }
             });
 
-            this.collection.add(new Product(newModel));
+            this.collection.add(new Intranet.Product(newModel));
             this.collection.sort();
         },
 
@@ -628,11 +628,11 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         write: function() {
-            writeJson("startUp", this.collection, true);
+            Intranet.writeJson("startUp", this.collection, true);
         },
 
         writeTemp: function() {
-            writeJson("startUp", this.collection, false);
+            Intranet.writeJson("startUp", this.collection, false);
         }
     });
 
@@ -667,7 +667,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
                 }
             });
 
-            this.collection.add(new Product(newModel));
+            this.collection.add(new Intranet.Product(newModel));
         },
 
         showForm: function() {
@@ -675,11 +675,11 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         write: function() {
-            writeJson("operational", this.collection, true);
+            Intranet.writeJson("operational", this.collection, true);
         },
 
         writeTemp: function() {
-            writeJson("operational", this.collection, false);
+            Intranet.writeJson("operational", this.collection, false);
         }
     });
 
@@ -714,7 +714,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
                 }
             });
 
-            this.collection.add(new Product(newModel));
+            this.collection.add(new Intranet.Product(newModel));
         },
 
         showForm: function() {
@@ -722,11 +722,11 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         write: function() {
-            writeJson("passive", this.collection, true);
+            Intranet.writeJson("passive", this.collection, true);
         },
 
         writeTemp: function() {
-            writeJson("passive", this.collection, false);
+            Intranet.writeJson("passive", this.collection, false);
         }
     });
 
