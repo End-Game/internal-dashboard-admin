@@ -24,7 +24,7 @@ require.config({
 require(['app', 'jquery', 'hoist'], function(app, $, hoist) {
     'use strict';
     app.init();
-    hoist.initialize('OTKHNJFFUOZZCZPZENLL', 'NTUOLFDMGAPGMVT[LOIX');
+    hoist.initialize('JJMQRQZHNRYPUBLFIKHI');
     if (hoist.isLoggedIn()) {
         hoist.getData(function(data) {
             app.intranet.jsonData = data;

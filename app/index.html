@@ -49,7 +49,7 @@
             <p class="title">Deadlines</p>
             <hr>
             <a id="showDeadlineForm" href="javascript:">Add new</a>
-            <form id="addDeadline" action="#">
+            <form id="addDeadline" action="javascript:">
                 <input id="date" value="date" />
                 <input id="task" value="task" />
                 <button class="add">Add</button>
@@ -59,7 +59,7 @@
             <p class="title">News Feed</p>
             <hr>
             <a id="showNewsForm" href="javascript:">Add new</a>
-            <form id="addNews" action="#">
+            <form id="addNews" action="javascript:">
                 <input id="date" value="date" />
                 <input id="news" value="news" />
                 <input id="author" value="author" />
@@ -70,7 +70,7 @@
             <p class="title">Useful Links</p>
             <hr>
             <a id="showLinkForm" href="javascript:">Add new</a>
-            <form id="addLink" action="#">
+            <form id="addLink" action="javascript:">
                 <input id="name" value="name" />
                 <input id="link" value="link" />
                 <input id="description" value="description" />
@@ -85,7 +85,7 @@
         <div class="column" id="start_up">
             <p class="bold_title">Start Up</p>
             <a id="showStartUpForm" href="javascript:">Add new</a>
-            <form id="addStartUp" action="#">
+            <form id="addStartUp" action="javascript:">
                 <input id="name" value="name" />
                 <p class="text">dots:</p>
                 <input id="dots" value="Single, Double or Triple" />
@@ -96,7 +96,7 @@
         <div class="column" id="operational">
             <p class="bold_title">Operational</p>
             <a id="showOperationalForm" href="javascript:">Add new</a>
-            <form id="addOperational" action="#">
+            <form id="addOperational" action="javascript:">
                 <input id="name" value="name" />
                 <p class="text">dots:</p>
                 <input id="dots" value="Single, Double or Triple" />
@@ -107,7 +107,7 @@
         <div class="column_last" id="passive">
             <p class="bold_title">Passive</p>
             <a id="showPassiveForm" href="javascript:">Add new</a>
-            <form id="addPassive" action="#">
+            <form id="addPassive" action="javascript:">
                 <input id="name" value="name" />
                 <p class="text">dots:</p>
                 <input id="dots" value="Single, Double or Triple" />
@@ -171,13 +171,13 @@
                 <a href="javascript:">Log in</a>
             </div>
 
-            <div class="bar">
+<!--        <div class="bar">
                 <span>or</span>
-            </div>
+            </div>ß
 
             <div class="big button signup">
                 <a href="javascript:">Sign up</a>
-            </div>
+            </div> -->
         </div>
     </section>
     <section id="SignUp" class="modal">
@@ -234,7 +234,7 @@
         <button class="edit">Edit</button>
     </script>
     <script id="graphDataEditTemplate" type="text/template">
-        <form action="#">
+        <form action="javascript:">
             <input class="dataTitle" value="<%=dataTitle%>" />
             <input class="data" value="<%=data%>" />
             <button class="save">Save</button>
@@ -248,7 +248,7 @@
         <button class="delete">Delete</button>
     </script>
     <script id="deadlineEditTemplate" type="text/template">
-        <form action="#">
+        <form action="javascript:">
             <input class="date" value="<%=date%>" />
             <input class="task" value="<%=task%>" />
             <button class="save">Save</button>
@@ -263,7 +263,7 @@
         <button class="delete">Delete</button>
     </script>
     <script id="newsEditTemplate" type="text/template">
-        <form action="#">
+        <form action="javascript:">
             <input class="date" value="<%=date%>" />
             <input class="news" value="<%=news%>" />
             <input class="author" value="<%=author%>" />
@@ -277,7 +277,7 @@
         <button class="delete">Delete</button>
     </script>
     <script id="linkEditTemplate" type="text/template">
-        <form action="#">
+        <form action="javascript:">
             <input class="name" value="<%=name%>" />
             <input class="link" value="<%=link%>" />
             <input class="description" value="<%=description%>" />
@@ -293,7 +293,7 @@
         <button class="delete">Delete</button>
     </script>
     <script id="productEditTemplate" type="text/template">
-        <form action="#">
+        <form action="javascript:">
             <input class="name" value="<%=name%>" />
             <input class="dots" value="<%=dots%>" />
             <input class="description" value="<%=description%>" />

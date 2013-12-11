@@ -22,6 +22,10 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
     };
 
     Intranet.drawGraph = function(ctx, percent, colour) {
+        ctx.beginPath();
+        ctx.arc(100, 100, 110, 0, Math.PI*2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
         do {
             ctx.beginPath();
             ctx.arc(100, 100, 80, Math.PI * 3 / 2 + 2 * Math.PI * percent, Math.PI * 3 / 2, true);
@@ -147,10 +151,10 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         renderGraph: function() {
             var c = document.getElementById("budget_canvas");
             var ctx = c.getContext("2d");
-            var target = this.collection.models[0].get("data");
-            var actual = this.collection.models[1].get("data");
-            target = parseFloat(target.substring(1, target.length));
-            actual = parseFloat(actual.substring(1, actual.length));
+            var target = (this.collection.models[0].get("data")).replace(/,|\$/g, "");
+            var actual = (this.collection.models[1].get("data")).replace(/,|\$/g, "");
+            target = parseFloat(target.substring(0, target.length));
+            actual = parseFloat(actual.substring(0, actual.length));
             var percent = actual / target;
             var colour = "#80C99C";
             Intranet.drawGraph(ctx, percent, colour);
@@ -174,10 +178,10 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
             var c = document.getElementById("investment_canvas");
             var ctx = c.getContext("2d");
             ctx.beginPath();
-            var target = this.collection.models[1].get("data");
-            var actual = this.collection.models[0].get("data");
-            target = parseFloat(target.substring(0, target.length - 1));
-            actual = parseFloat(actual.substring(0, actual.length - 1));
+            var target = (this.collection.models[1].get("data")).replace(/,|%/g, "");
+            var actual = (this.collection.models[0].get("data")).replace(/,|%/g, "");
+            target = parseFloat(target.substring(0, target.length));
+            actual = parseFloat(actual.substring(0, actual.length));
             var percent = actual / target;
             var colour = "#D82253";
             Intranet.drawGraph(ctx, percent, colour);
@@ -201,10 +205,10 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         renderGraph: function() {
             var c = document.getElementById("team_satisfaction_canvas");
             var ctx = c.getContext("2d");
-            var target = this.collection.models[0].get("data");
-            var actual = this.collection.models[1].get("data");
-            target = parseFloat(target.substring(0, target.length - 1));
-            actual = parseFloat(actual.substring(0, actual.length - 1));
+            var target = (this.collection.models[0].get("data")).replace(/,|%/g, "");
+            var actual = (this.collection.models[1].get("data")).replace(/,|%/g, "");
+            target = parseFloat(target.substring(0, target.length));
+            actual = parseFloat(actual.substring(0, actual.length));
             var percent = actual / target;
             var colour = "#666666";
             Intranet.drawGraph(ctx, percent, colour);
@@ -281,6 +285,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         render: function() {
+            this.$("div").remove();
             var that = this;
             _.each(this.collection.models, function(item) {
                 that.renderDeadline(item);
@@ -387,6 +392,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         render: function() {
+            this.$("div").remove();
             var that = this;
             _.each(this.collection.models, function(item) {
                 that.renderNews(item);
@@ -491,6 +497,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
         },
 
         render: function() {
+            this.$("div").remove();
             var that = this;
             _.each(this.collection.models, function(item) {
                 that.renderLink(item);
@@ -574,6 +581,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
 
     Intranet.ProductListView = Backbone.View.extend({
         render: function() {
+            this.$("div").remove();
             var that = this;
             _.each(this.collection.models, function(item) {
                 that.renderProduct(item);
@@ -766,7 +774,7 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
 
         events: {
             'click .login a': 'login',
-            'click .signup a': 'signup'
+            // 'click .signup a': 'signup'
         },
 
         el: '#Login',
@@ -787,42 +795,42 @@ define(['intranet', 'backbone', 'hoist'], function(Intranet, Backbone, hoist) {
             return false;
 
         },
-        signup: function() {
-            $('section').hide();
-            new Intranet.SignUp();
-        }
+        // signup: function() {
+        //     $('section').hide();
+        //     new Intranet.SignUp();
+        // }
 
     });
 
-    Intranet.SignUp = Intranet.View.extend({
-        events: {
-            'click .login a': 'login',
-            'click .signup a': 'signup'
-        },
+    // Intranet.SignUp = Intranet.View.extend({
+    //     events: {
+    //         'click .login a': 'login',
+    //         'click .signup a': 'signup'
+    //     },
 
-        el: '#SignUp',
+    //     el: '#SignUp',
 
-        signup: function() {
-            hoist.signup(this.$('#Name').val(), this.$('#EmailAddress').val(), this.$('#Password').val(), function() {
-                console.log("signup successful");
-                hoist.getData(function(data) {
-                    $('section').hide();
-                    Intranet.jsonData = data;
-                    new Intranet.EndGameIntranetView();
-                }, function() {
-                    console.log("data get unsuccessful");
-                });
-            }, function() {
-                console.log("signup unsuccessful");
-            });
-            return false;
-        },
+    //     signup: function() {
+    //         hoist.signup(this.$('#Name').val(), this.$('#EmailAddress').val(), this.$('#Password').val(), function() {
+    //             console.log("signup successful");
+    //             hoist.getData(function(data) {
+    //                 $('section').hide();
+    //                 Intranet.jsonData = data;
+    //                 new Intranet.EndGameIntranetView();
+    //             }, function() {
+    //                 console.log("data get unsuccessful");
+    //             });
+    //         }, function() {
+    //             console.log("signup unsuccessful");
+    //         });
+    //         return false;
+    //     },
 
-        login: function() {
-            $('section').hide();
-            new Intranet.Login();
-        }
-    });
+    //     login: function() {
+    //         $('section').hide();
+    //         new Intranet.Login();
+    //     }
+    // });
 
     return Intranet;
 });

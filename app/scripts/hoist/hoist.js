@@ -8,20 +8,10 @@ define(["jquery"], function(jQuery) {
     Hoist.prototype = {
         hoistUserKey: 'hoist-user',
         ajaxOptions: {},
-        ajaxOptionsData: {},
-        initialize: function(apiKey, dataApiKey) {
+        initialize: function(apiKey) {
             self.ajaxOptions = {
                 headers: {
                     'Authorization': 'Hoist ' + apiKey
-                },
-                crossDomain: true,
-                xhrFields: {
-                    withCredentials: true
-                }
-            };
-            self.ajaxOptionsData = {
-                headers: {
-                    'Authorization': 'Hoist ' + dataApiKey
                 },
                 crossDomain: true,
                 xhrFields: {
@@ -79,25 +69,27 @@ define(["jquery"], function(jQuery) {
                 success: function(response) {
                     onSuccess(response);
                 },
-                error: function() {
-                    onFailure;
+                error: function(request, status, error) {
+                    console.log(error);
+                    onFailure();
                 }
-            }, self.ajaxOptionsData);
+            }, self.ajaxOptions);
             $.ajax(options);
         },
         postData: function(data, onSuccess, onFailure) {
             var options = jQuery.extend({
                 url: "https://data.hoi.io/EndGamePortal/data",
                 type: "POST",
-                dataType: "json",
-                data: data,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
                 success: function() {
                     onSuccess();
                 },
-                error: function() {
-                    onFailure;
+                error: function(request, status, error) {
+                    console.log(error);
+                    onFailure();
                 }
-            }, self.ajaxOptionsData);
+            }, self.ajaxOptions);
             $.ajax(options);
         }
     };
